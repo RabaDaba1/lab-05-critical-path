@@ -36,7 +36,7 @@ class ProjectNetwork:
         directed graph directly representing the network
     start_node: ProjectState
         an initial node in the network (empty state, nothing done)
-    goal_done: ProjectState
+    goal_node: ProjectState
         a goal node in the network (full state, everything done)
 
     Methods:
