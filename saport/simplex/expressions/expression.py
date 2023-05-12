@@ -1,6 +1,6 @@
 from __future__ import annotations
 from copy import deepcopy
-from typing import Iterable, List
+from typing import Iterable, List, Union
 
 from itertools import groupby
 from functools import reduce
@@ -82,9 +82,11 @@ class Expression:
     def is_equivalent(self, other: Expression, model: ssmod.model) -> bool:
         return self.coefficients(model) == other.coefficients(model)
 
-    def __add__(self, other: Expression) -> Expression:
+    def __add__(self, other: Union[Expression, float]) -> Expression:
+        if other == 0:
+            return Expression(*self.atoms)
         new_atoms = list(self.atoms)
-        new_atoms += other.atoms;
+        new_atoms += other.atoms
         return Expression(*new_atoms)
 
     def __sub__(self, other: Expression) -> Expression:
@@ -98,6 +100,10 @@ class Expression:
         return Expression(*new_atoms)
 
     __rmul__ = __mul__
+    
+    def __radd__(self, other):
+        if other == 0:
+            return Expression(*self.atoms)
 
     def __eq__(self, bound: float) -> ssecon.Constraint:
         return ssecon.Constraint(self, bound, ssecon.ConstraintType.EQ)
