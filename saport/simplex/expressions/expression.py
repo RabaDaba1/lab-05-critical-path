@@ -1,6 +1,6 @@
 from __future__ import annotations
 from copy import deepcopy
-from typing import Iterable, List, Union
+from typing import Iterable, List, Union, Tuple
 
 from itertools import groupby
 from functools import reduce
@@ -83,11 +83,13 @@ class Expression:
         return self.coefficients(model) == other.coefficients(model)
 
     def __add__(self, other: Union[Expression, float]) -> Expression:
-        if other == 0:
+        if isinstance(other, (int, float)) and other == 0:
             return Expression(*self.atoms)
         new_atoms = list(self.atoms)
         new_atoms += other.atoms
         return Expression(*new_atoms)
+    
+    __radd__ = __add__
 
     def __sub__(self, other: Expression) -> Expression:
         return self.__add__(other * -1)
@@ -100,10 +102,6 @@ class Expression:
         return Expression(*new_atoms)
 
     __rmul__ = __mul__
-    
-    def __radd__(self, other):
-        if other == 0:
-            return Expression(*self.atoms)
 
     def __eq__(self, bound: float) -> ssecon.Constraint:
         return ssecon.Constraint(self, bound, ssecon.ConstraintType.EQ)
