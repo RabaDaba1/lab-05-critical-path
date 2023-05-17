@@ -57,14 +57,14 @@ class Solver:
         # earliest_times[state] = e
         earliest_times = {self.project_network.start_node: 0}
 
-        top_it = nx.topological_sort(self.project_network.network)
+        topo_sorted = nx.topological_sort(self.project_network.network)
 
-        for e1 in top_it:
-            tab = self.project_network.predecessors(e1)
-            if not tab:
+        for e1 in topo_sorted:
+            predecessor = self.project_network.predecessors(e1)
+            if not predecessor:
                 earliest_times[e1] = 0
                 continue
-            earliest_times[e1] = max(earliest_times[e2] + self.project_network.arc_duration(e2, e1) for e2 in tab)
+            earliest_times[e1] = max(earliest_times[e2] + self.project_network.arc_duration(e2, e1) for e2 in predecessor)
 
         return earliest_times
 
@@ -76,14 +76,14 @@ class Solver:
 
         latest_times = {self.project_network.goal_node: earliest_times[self.project_network.goal_node]}
 
-        top_it = reversed(list(nx.topological_sort(self.project_network.network)))
+        topo_sorted = reversed(list(nx.topological_sort(self.project_network.network)))
 
-        for w in top_it:
-            tab = self.project_network.successors(w)
-            if not tab:
-                latest_times[w] = earliest_times[w]
+        for e1 in topo_sorted:
+            predecessor = self.project_network.successors(e1)
+            if not predecessor:
+                latest_times[e1] = earliest_times[e1]
                 continue
-            latest_times[w] = min(latest_times[v] - self.project_network.arc_duration(w, v) for v in tab)
+            latest_times[e1] = min(latest_times[e2] - self.project_network.arc_duration(e1, e2) for e2 in predecessor)
 
         return latest_times
 
