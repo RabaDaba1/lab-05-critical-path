@@ -74,9 +74,9 @@ class Solver:
         #    equals earliest time of the same node
         # 2. every other event occur has to occur before its successors latest time
 
-        top_it = reversed(list(nx.topological_sort(self.project_network.network)))
-
         latest_times = {self.project_network.goal_node: earliest_times[self.project_network.goal_node]}
+
+        top_it = reversed(list(nx.topological_sort(self.project_network.network)))
 
         for w in top_it:
             tab = self.project_network.successors(w)
