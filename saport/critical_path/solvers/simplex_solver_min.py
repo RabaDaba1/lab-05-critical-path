@@ -43,9 +43,9 @@ class Solver:
 
         
         edges = self.project_network.edges()
-        verticies = {n.index: n for n in self.project_network.nodes()}
+        verticies = {n.index: node for node in self.project_network.nodes()}
 
-        variables = {verticies[n] : model.create_variable("t{}".format(i)) for i, n in enumerate(verticies)}
+        variables = {verticies[node] : model.create_variable(f"t{i}") for i, node in enumerate(verticies)}
 
         for e1, e2, t in edges:
             model.add_constraint(Expression(variables[e2]) - Expression(variables[e1]) >= t.duration)
