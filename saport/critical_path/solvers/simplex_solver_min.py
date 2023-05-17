@@ -41,9 +41,8 @@ class Solver:
         #          `saport/critical_path/project_network.py` for guidance
         model = Model("critical path (min)")
 
-        
         edges = self.project_network.edges()
-        verticies = {n.index: node for node in self.project_network.nodes()}
+        verticies = {node.index: node for node in self.project_network.nodes()}
 
         variables = {verticies[node] : model.create_variable(f"t{i}") for i, node in enumerate(verticies)}
 
