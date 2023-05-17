@@ -45,7 +45,7 @@ class Solver:
         critical_paths = self.create_critical_paths(task_slacks)
         # TODO:
         # set duration of the project based on the gathered data
-        duration = None
+        duration = earliest_times[self.project_network.goal_node]
         return FullSolution(duration, critical_paths, task_slacks)
 
     def forward_propagation(self) -> Dict[ProjectState, int]:
@@ -55,7 +55,17 @@ class Solver:
         #    plus duration of the tasks leading to the state
         #
         # earliest_times[state] = e
-        earliest_times = None
+        earliest_times = {self.project_network.start_node: 0}
+
+        top_it = nx.topological_sort(self.project_network.network)
+
+        for e1 in top_it:
+            tab = self.project_network.predecessors(e1)
+            if not tab:
+                earliest_times[e1] = 0
+                continue
+            earliest_times[e1] = max(earliest_times[e2] + self.project_network.arc_duration(e2, e1) for e2 in tab)
+
         return earliest_times
 
     def backward_propagation(self, earliest_times: Dict[ProjectState, int]) -> Dict[ProjectState, int]:
@@ -63,7 +73,18 @@ class Solver:
         # 1. latest time of the project goal node always 
         #    equals earliest time of the same node
         # 2. every other event occur has to occur before its successors latest time
-        latest_times = None
+
+        top_it = reversed(list(nx.topological_sort(self.project_network.network)))
+
+        latest_times = {self.project_network.goal_node: earliest_times[self.project_network.goal_node]}
+
+        for w in top_it:
+            tab = self.project_network.successors(w)
+            if not tab:
+                latest_times[w] = earliest_times[w]
+                continue
+            latest_times[w] = min(latest_times[v] - self.project_network.arc_duration(w, v) for v in tab)
+
         return latest_times
 
     def calculate_slacks(self, 
@@ -75,7 +96,10 @@ class Solver:
         # tip: remember to ignore dummy tasks 
         #      - task.is_dummy could be helpful
         #      - read docs of class `Task` in saport/critical_path/model.py
-        slacks = None
+        slacks = Dict()
+        for e1, e2, task  in self.project_network.edges():
+            continue if task.is_dummy else slacks[task.name] = latest_times[e2] - earliest_times[e1] - task.duration
+
         return slacks
 
     def create_critical_paths(self, slacks: Dict[str, int]) -> List[List[str]]:
