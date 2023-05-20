@@ -55,19 +55,18 @@ class Solver:
         #    plus duration of the tasks leading to the state
         #
         # earliest_times[state] = e
-        # earliest_times = {self.project_network.start_node: 0}
+        earliest_times = {self.project_network.start_node: 0}
 
-        # topo_sorted = nx.topological_sort(self.project_network.network)
+        topo_sorted = nx.topological_sort(self.project_network.network)
 
-        # for e1 in topo_sorted:
-        #     predecessor = self.project_network.predecessors(e1)
-        #     if not predecessor:
-        #         earliest_times[e1] = 0
-        #         continue
-        #     earliest_times[e1] = max([earliest_times[e2] + self.project_network.arc_duration(e2, e1) for e2 in predecessor])
+        for e1 in topo_sorted:
+            predecessor = self.project_network.predecessors(e1)
+            if not predecessor:
+                earliest_times[e1] = 0
+                continue
+            earliest_times[e1] = max([earliest_times[e2] + self.project_network.arc_duration(e2, e1) for e2 in predecessor])
 
-        # return earliest_times
-        return Dict()
+        return earliest_times
 
     def backward_propagation(self, earliest_times: Dict[ProjectState, int]) -> Dict[ProjectState, int]:
         # TODO:
