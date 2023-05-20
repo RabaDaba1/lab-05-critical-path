@@ -75,18 +75,20 @@ class Solver:
         #    equals earliest time of the same node
         # 2. every other event occur has to occur before its successors latest time
 
-        latest_times = {self.project_network.goal_node: earliest_times[self.project_network.goal_node]}
+        # latest_times = {self.project_network.goal_node: earliest_times[self.project_network.goal_node]}
 
-        topo_sorted = reversed(list(nx.topological_sort(self.project_network.network)))
+        # topo_sorted = reversed(list(nx.topological_sort(self.project_network.network)))
 
-        for e1 in topo_sorted:
-            predecessor = self.project_network.successors(e1)
-            if not predecessor:
-                latest_times[e1] = earliest_times[e1]
-                continue
-            latest_times[e1] = min(latest_times[e2] - self.project_network.arc_duration(e1, e2) for e2 in predecessor)
+        # for e1 in topo_sorted:
+        #     predecessor = self.project_network.successors(e1)
+        #     if not predecessor:
+        #         latest_times[e1] = earliest_times[e1]
+        #         continue
+        #     latest_times[e1] = min(latest_times[e2] - self.project_network.arc_duration(e1, e2) for e2 in predecessor)
 
-        return latest_times
+        # return latest_times
+
+        return Dict()
 
     def calculate_slacks(self, 
                          earliest_times: Dict[ProjectState, int], 
@@ -98,8 +100,8 @@ class Solver:
         #      - task.is_dummy could be helpful
         #      - read docs of class `Task` in saport/critical_path/model.py
         slacks = Dict()
-        for e1, e2, task  in self.project_network.edges():
-            continue if task.is_dummy else slacks[task.name] = latest_times[e2] - earliest_times[e1] - task.duration
+        # for e1, e2, task  in self.project_network.edges():
+        #     continue if task.is_dummy else slacks[task.name] = latest_times[e2] - earliest_times[e1] - task.duration
 
         return slacks
 
@@ -117,22 +119,22 @@ class Solver:
         # tip 2. use method "remove_edge(<start>, <end>)" directly on the graph object 
         # tip 3. nx.all_simple_paths method finds all the paths in the graph
         # tip 4. if "L" is a list "[1,2,3,4]", zip(L, L[1:]) will return [(1,2),(2,3),(3,4)]
-        network_copy = self.project_network.copy()
+        # network_copy = self.project_network.copy()
 
-        for e1, e2, task in network_copy.edges():
-            if not task.is_dummy and slacks[task.name] != 0:
-                network_copy.network.remove_edge(e1, e2)
+        # for e1, e2, task in network_copy.edges():
+        #     if not task.is_dummy and slacks[task.name] != 0:
+        #         network_copy.network.remove_edge(e1, e2)
 
-        edges = {(n[0].index, n[1].index): n[2].name for n in network_copy.edges()}
+        # edges = {(n[0].index, n[1].index): n[2].name for n in network_copy.edges()}
         
-        paths = list(nx.all_simple_paths(network_copy.network, self.project_network.start_node, self.project_network.goal_node))
+        # paths = list(nx.all_simple_paths(network_copy.network, self.project_network.start_node, self.project_network.goal_node))
 
         critical_paths = list()
-        for path in paths:
-            temp = list()
-            for i in range(len(path) - 1):
-                if edges[(path[i].index, path[i + 1].index)] != "*":
-                    temp.append(edges[(path[i].index, path[i + 1].index)])
-            critical_paths.append(temp)
+        # for path in paths:
+        #     temp = list()
+        #     for i in range(len(path) - 1):
+        #         if edges[(path[i].index, path[i + 1].index)] != "*":
+        #             temp.append(edges[(path[i].index, path[i + 1].index)])
+        #     critical_paths.append(temp)
 
         return critical_paths
