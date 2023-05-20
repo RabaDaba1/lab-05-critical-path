@@ -98,7 +98,10 @@ class Solver:
         #      - read docs of class `Task` in saport/critical_path/model.py
         slacks = Dict()
         for (e1, e2, task) in self.project_network.edges():
-            continue if task.is_dummy else slacks[task.name] = latest_times[e2] - earliest_times[e1] - task.duration
+            if task.is_dummy:
+                continue
+            else:
+                slacks[task.name] = latest_times[e2] - earliest_times[e1] - task.duration
 
         return slacks
 
