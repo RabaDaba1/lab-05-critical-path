@@ -119,22 +119,22 @@ class Solver:
         # tip 2. use method "remove_edge(<start>, <end>)" directly on the graph object 
         # tip 3. nx.all_simple_paths method finds all the paths in the graph
         # tip 4. if "L" is a list "[1,2,3,4]", zip(L, L[1:]) will return [(1,2),(2,3),(3,4)]
-        # network_copy = self.project_network.copy()
+        network_copy = self.project_network.copy()
 
-        # for e1, e2, task in network_copy.edges():
-        #     if not task.is_dummy and slacks[task.name] != 0:
-        #         network_copy.network.remove_edge(e1, e2)
+        for e1, e2, task in network_copy.edges():
+            if not task.is_dummy and slacks[task.name] != 0:
+                network_copy.network.remove_edge(e1, e2)
 
-        # edges = {(n[0].index, n[1].index): n[2].name for n in network_copy.edges()}
+        edges = {(n[0].index, n[1].index): n[2].name for n in network_copy.edges()}
         
-        # paths = list(nx.all_simple_paths(network_copy.network, self.project_network.start_node, self.project_network.goal_node))
+        paths = list(nx.all_simple_paths(network_copy.network, self.project_network.start_node, self.project_network.goal_node))
 
         critical_paths = list()
-        # for path in paths:
-        #     temp = list()
-        #     for i in range(len(path) - 1):
-        #         if edges[(path[i].index, path[i + 1].index)] != "*":
-        #             temp.append(edges[(path[i].index, path[i + 1].index)])
-        #     critical_paths.append(temp)
+        for path in paths:
+            temp = list()
+            for i in range(len(path) - 1):
+                if edges[(path[i].index, path[i + 1].index)] != "*":
+                    temp.append(edges[(path[i].index, path[i + 1].index)])
+            critical_paths.append(temp)
 
         return critical_paths
