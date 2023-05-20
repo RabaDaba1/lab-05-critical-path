@@ -57,9 +57,9 @@ class Solver:
         # earliest_times[state] = e
         earliest_times = {self.project_network.start_node: 0}
 
-        topo_sorted = nx.topological_sort(self.project_network.network)
+        sorted_network = nx.topological_sort(self.project_network.network)
 
-        for e1 in topo_sorted:
+        for e1 in sorted_network:
             predecessor = list(self.project_network.predecessors(e1))
             if not predecessor:
                 earliest_times[e1] = 0
@@ -74,20 +74,18 @@ class Solver:
         #    equals earliest time of the same node
         # 2. every other event occur has to occur before its successors latest time
 
-        # latest_times = {self.project_network.goal_node: earliest_times[self.project_network.goal_node]}
+        latest_times = {self.project_network.goal_node: earliest_times[self.project_network.goal_node]}
 
-        # topo_sorted = reversed(list(nx.topological_sort(self.project_network.network)))
+        sorted_network = reversed(list(nx.topological_sort(self.project_network.network)))
 
-        # for e1 in topo_sorted:
-        #     predecessor = self.project_network.successors(e1)
-        #     if not predecessor:
-        #         latest_times[e1] = earliest_times[e1]
-        #         continue
-        #     latest_times[e1] = min(latest_times[e2] - self.project_network.arc_duration(e1, e2) for e2 in predecessor)
+        for e1 in sorted_network:
+            predecessor = list(self.project_network.successors(e1))
+            if not predecessor:
+                latest_times[e1] = earliest_times[e1]
+                continue
+            latest_times[e1] = min(latest_times[e2] - self.project_network.arc_duration(e1, e2) for e2 in predecessor)
 
-        # return latest_times
-
-        return Dict()
+        return latest_times
 
     def calculate_slacks(self, 
                          earliest_times: Dict[ProjectState, int], 
