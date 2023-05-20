@@ -67,6 +67,7 @@ class Solver:
         #     earliest_times[e1] = max([earliest_times[e2] + self.project_network.arc_duration(e2, e1) for e2 in predecessor])
 
         # return earliest_times
+        return Dict()
 
     def backward_propagation(self, earliest_times: Dict[ProjectState, int]) -> Dict[ProjectState, int]:
         # TODO:
