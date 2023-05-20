@@ -60,7 +60,7 @@ class Solver:
         topo_sorted = nx.topological_sort(self.project_network.network)
 
         for e1 in topo_sorted:
-            predecessor = self.project_network.predecessors(e1)
+            predecessor = list(self.project_network.predecessors(e1))
             if not predecessor:
                 earliest_times[e1] = 0
                 continue
