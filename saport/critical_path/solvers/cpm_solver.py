@@ -55,32 +55,18 @@ class Solver:
         #    plus duration of the tasks leading to the state
         #
         # earliest_times[state] = e
-        # earliest_times = {self.project_network.start_node: 0}
-
-        # topo_sorted = nx.topological_sort(self.project_network.network)
-
-        # for e1 in topo_sorted:
-        #     predecessor = self.project_network.predecessors(e1)
-        #     if not predecessor:
-        #         earliest_times[e1] = 0
-        #         continue
-        #     earliest_times[e1] = max(earliest_times[e2] + self.project_network.arc_duration(e2, e1) for e2 in predecessor)
-
-        # return earliest_times
-
-        top_it = nx.topological_sort(self.project_network.network)
-
         earliest_times = {self.project_network.start_node: 0}
 
-        for w in top_it:
-            tab = list(self.project_network.predecessors(w))
-            if not tab:
-                earliest_times[w] = 0
+        topo_sorted = nx.topological_sort(self.project_network.network)
+
+        for e1 in topo_sorted:
+            predecessor = self.project_network.predecessors(e1)
+            if not predecessor:
+                earliest_times[e1] = 0
                 continue
-            earliest_times[w] = max(earliest_times[v] + self.project_network.arc_duration(v, w) for v in tab)
+            earliest_times[e1] = max([earliest_times[e2] + self.project_network.arc_duration(e2, e1) for e2 in predecessor])
 
         return earliest_times
-
 
     def backward_propagation(self, earliest_times: Dict[ProjectState, int]) -> Dict[ProjectState, int]:
         # TODO:
@@ -140,9 +126,9 @@ class Solver:
         
         paths = list(nx.all_simple_paths(network_copy.network, self.project_network.start_node, self.project_network.goal_node))
 
-        critical_paths = []
+        critical_paths = list()
         for path in paths:
-            temp = []
+            temp = list()
             for i in range(len(path) - 1):
                 if edges[(path[i].index, path[i + 1].index)] != "*":
                     temp.append(edges[(path[i].index, path[i + 1].index)])
