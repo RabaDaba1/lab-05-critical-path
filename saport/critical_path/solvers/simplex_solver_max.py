@@ -49,7 +49,7 @@ class Solver:
 
         variables = {edge: model.create_variable(f'variable_{i}') for i, edge in enumerate(edges)}
 
-        for i, edge in edges:
+        for edge in edges:
             model.add_constraint(Expression(variables[edge]) <= 1)
 
         start_node = self.project_network.start_node
@@ -65,13 +65,13 @@ class Solver:
         model.add_constraint(var_sum(successors_variables) == 1)
 
         # Add a constraint to the model that the sum of the variables for the arcs going into the goal node must be equal to 1.
-        predecessors_varaibles = [
+        predecessors_variables = [
             Expression(
                 variables[(pred, goal_node, self.project_network.arc_task(pred, goal_node))]
             )
             for pred in self.project_network.predecessors(goal_node)
         ]
-        model.add_constraint(var_sum(predecessors_varaibles) == 1)
+        model.add_constraint(var_sum(predecessors_variables) == 1)
 
         for node in self.project_network.nodes():
             if node != start_node and node != goal_node:
