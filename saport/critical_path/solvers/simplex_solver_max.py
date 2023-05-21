@@ -44,6 +44,50 @@ class Solver:
         #        - read documentation of ProjectNetwork class in 
         #          `saport/critical_path/project_network.py` for guidance
         model = Model("critical path (max)")
+
+        edges = self.project_network.edges()
+
+        variables = {edge: model.create_variable(f'variable_{i}') for i, edge in enumerate(edges)}
+
+        for i, edge in edges:
+            model.add_constraint(Expression(variables[edge]) <= 1)
+
+        start_node = self.project_network.start_node
+        goal_node = self.project_network.goal_node
+
+        # Add a constraint to the model that the sum of the variables for the arcs going out of the start node must be equal to 1.
+        successors_variables = [
+            Expression(
+                variables[(start_node, succ, self.project_network.arc_task(start_node, succ))]
+            )
+            for succ in self.project_network.successors(start_node)
+        ]
+        model.add_constraint(var_sum(successors_variables) == 1)
+
+        # Add a constraint to the model that the sum of the variables for the arcs going into the goal node must be equal to 1.
+        predecessors_varaibles = [
+            Expression(
+                variables[(pred, goal_node, self.project_network.arc_task(pred, goal_node))]
+            )
+            for pred in self.project_network.predecessors(goal_node)
+        ]
+        model.add_constraint(var_sum(predecessors_varaibles) == 1)
+
+        for node in self.project_network.nodes():
+            if node != start_node and node != goal_node:
+                incoming = [(pred, node, self.project_network.arc_task(pred, node)) for pred in self.project_network.predecessors(node)]
+                outgoing = [(node, succ, self.project_network.arc_task(node, succ)) for succ in self.project_network.successors(node)]
+
+                outgoing_sum = var_sum([Expression(variables[edge]) for edge in outgoing])
+                incoming_sum = var_sum([Expression(variables[edge]) for edge in incoming])
+
+                model.add_constraint(outgoing_sum - incoming_sum == 0)
+
+        
+        # Set models objecitve to path's length maximization
+        path_length = var_sum([Expression(variables[edge]) * edge[2].duration for edge in edges])
+        model.maximize(path_length)
+
         return model
 
     def solve(self) -> BasicSolution:
