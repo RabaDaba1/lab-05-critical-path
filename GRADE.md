@@ -1,7 +1,7 @@
 Dear Student,
 
 I'm happy to announce that you've managed to get **10** out of 10 points for this assignment.
-Me and all the other virtual entities [salute you](https://tenor.com/xtvD.gif).
+You should be proud of yourself; therefore please deliver yourself a [self-five](https://youtu.be/kMUkzWO8viY) on my behalf as I am not a corporeal being.
 
 -----------
 I remain your faithful servant\
