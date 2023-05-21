@@ -3,7 +3,7 @@ from ..model import Project
 from ..project_network import ProjectState, ProjectNetwork
 from typing import List, Dict
 from ..solution import FullSolution
-
+import copy
 
 class Solver:
     '''
