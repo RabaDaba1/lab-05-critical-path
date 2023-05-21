@@ -44,18 +44,21 @@ class Solver:
         #        - read documentation of ProjectNetwork class in 
         #          `saport/critical_path/project_network.py` for guidance
         model = Model("critical path (max)")
+        
+        start_node = self.project_network.start_node
+        goal_node = self.project_network.goal_node
 
+        # 0) For each edge in a project create a variable
         edges = self.project_network.edges()
 
         variables = {edge: model.create_variable(f'variable_{i}') for i, edge in enumerate(edges)}
 
+        # 1) Set constraints so that every variable is <= 1
         for edge in edges:
             model.add_constraint(Expression(variables[edge]) <= 1)
 
-        start_node = self.project_network.start_node
-        goal_node = self.project_network.goal_node
 
-        # Add a constraint to the model that the sum of the variables for the arcs going out of the start node must be equal to 1.
+        # 2) Add constraint to variables starting at an initial state
         successors_variables = [
             Expression(
                 variables[(start_node, succ, self.project_network.arc_task(start_node, succ))]
@@ -64,7 +67,7 @@ class Solver:
         ]
         model.add_constraint(var_sum(successors_variables) == 1)
 
-        # Add a constraint to the model that the sum of the variables for the arcs going into the goal node must be equal to 1.
+        # 3) Add constraint to variables ending at a goal state
         predecessors_variables = [
             Expression(
                 variables[(pred, goal_node, self.project_network.arc_task(pred, goal_node))]
@@ -73,6 +76,7 @@ class Solver:
         ]
         model.add_constraint(var_sum(predecessors_variables) == 1)
 
+        # 4) Set flow going through other variables equal to 1
         for node in self.project_network.nodes():
             if node != start_node and node != goal_node:
                 incoming = [(pred, node, self.project_network.arc_task(pred, node)) for pred in self.project_network.predecessors(node)]
@@ -84,7 +88,7 @@ class Solver:
                 model.add_constraint(exiting_sum - incoming_sum == 0)
 
         
-        # Set models objecitve to path's length maximization
+        # 5) Set models objecitve to path's length maximization
         path_length = var_sum([Expression(variables[edge]) * edge[2].duration for edge in edges])
         model.maximize(path_length)
 
