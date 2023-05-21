@@ -62,8 +62,7 @@ class Solver:
         successors_variables = [
             Expression(
                 variables[(start_node, succ, self.project_network.arc_task(start_node, succ))]
-            )
-            for succ in self.project_network.successors(start_node)
+            ) for succ in self.project_network.successors(start_node)
         ]
         model.add_constraint(var_sum(successors_variables) == 1)
 
@@ -71,8 +70,7 @@ class Solver:
         predecessors_variables = [
             Expression(
                 variables[(pred, goal_node, self.project_network.arc_task(pred, goal_node))]
-            )
-            for pred in self.project_network.predecessors(goal_node)
+            ) for pred in self.project_network.predecessors(goal_node)
         ]
         model.add_constraint(var_sum(predecessors_variables) == 1)
 
@@ -86,7 +84,6 @@ class Solver:
                 incoming_sum = var_sum([Expression(variables[edge]) for edge in incoming])
 
                 model.add_constraint(exiting_sum - incoming_sum == 0)
-
         
         # 5) Set models objecitve to path's length maximization
         path_length = var_sum([Expression(variables[edge]) * edge[2].duration for edge in edges])
