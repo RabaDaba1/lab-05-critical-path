@@ -121,7 +121,7 @@ class Solver:
         # tip 4. if "L" is a list "[1,2,3,4]", zip(L, L[1:]) will return [(1,2),(2,3),(3,4)]
         network_copy = copy.deepcopy(self.project_network)
 
-        for (e1, e2, task) in network_copy.edges():
+        for e1, e2, task in network_copy.edges():
             if not task.is_dummy and slacks[task.name] != 0:
                 network_copy.network.remove_edge(e1, e2)
 
@@ -129,12 +129,5 @@ class Solver:
         
         paths = list(nx.all_simple_paths(network_copy.network, self.project_network.start_node, self.project_network.goal_node))
 
-        critical_paths = list()
-        for path in paths:
-            temp = list()
-            for i in range(len(path) - 1):
-                if edges[(path[i].index, path[i + 1].index)] != "*":
-                    temp.append(edges[(path[i].index, path[i + 1].index)])
-            critical_paths.append(temp)
 
-        return critical_paths
+        return list()
