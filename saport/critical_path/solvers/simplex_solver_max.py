@@ -57,14 +57,13 @@ class Solver:
         for edge in edges:
             model.add_constraint(Expression(variables[edge]) <= 1)
 
-
         # 2) Add constraint to variables starting at an initial state
         successors_variables = [
             Expression(
                 variables[(start_node, succ, self.project_network.arc_task(start_node, succ))]
             ) for succ in self.project_network.successors(start_node)
         ]
-        model.add_constraint(var_sum(successors_variables) == 1)
+        model.add_constraint(sum(successors_variables) == 1)
 
         # 3) Add constraint to variables ending at a goal state
         predecessors_variables = [
@@ -72,7 +71,7 @@ class Solver:
                 variables[(pred, goal_node, self.project_network.arc_task(pred, goal_node))]
             ) for pred in self.project_network.predecessors(goal_node)
         ]
-        model.add_constraint(var_sum(predecessors_variables) == 1)
+        model.add_constraint(sum(predecessors_variables) == 1)
 
         # 4) Set flow going through other variables equal to 1
         for node in self.project_network.nodes():
@@ -80,13 +79,13 @@ class Solver:
                 incoming = [(pred, node, self.project_network.arc_task(pred, node)) for pred in self.project_network.predecessors(node)]
                 exiting = [(node, succ, self.project_network.arc_task(node, succ)) for succ in self.project_network.successors(node)]
 
-                exiting_sum = var_sum([Expression(variables[edge]) for edge in exiting])
-                incoming_sum = var_sum([Expression(variables[edge]) for edge in incoming])
+                exiting_sum = sum([Expression(variables[edge]) for edge in exiting])
+                incoming_sum = sum([Expression(variables[edge]) for edge in incoming])
 
                 model.add_constraint(exiting_sum - incoming_sum == 0)
         
         # 5) Set models objecitve to path's length maximization
-        path_length = var_sum([Expression(variables[edge]) * edge[2].duration for edge in edges])
+        path_length = sum([Expression(variables[edge]) * edge[2].duration for edge in edges])
         model.maximize(path_length)
 
         return model
