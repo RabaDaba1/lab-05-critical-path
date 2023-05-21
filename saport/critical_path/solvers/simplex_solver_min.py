@@ -41,13 +41,12 @@ class Solver:
         #          `saport/critical_path/project_network.py` for guidance
         model = Model("critical path (min)")
 
-        edges = self.project_network.edges()
         verticies = {node.index: node for node in self.project_network.nodes()}
 
         variables = {verticies[node] : model.create_variable(f"t{i}") for i, node in enumerate(verticies)}
 
-        for e1, e2, t in edges:
-            model.add_constraint(Expression(variables[e2]) - Expression(variables[e1]) >= t.duration)
+        for e1, e2, task in self.project_network.edges():
+            model.add_constraint(Expression(variables[e2]) - Expression(variables[e1]) >= task.duration)
 
         model.minimize(Expression(variables[verticies[self.project_network.goal_node.index]]) - variables[verticies[self.project_network.start_node.index]])
 
