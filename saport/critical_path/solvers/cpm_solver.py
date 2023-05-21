@@ -96,14 +96,8 @@ class Solver:
         # tip: remember to ignore dummy tasks 
         #      - task.is_dummy could be helpful
         #      - read docs of class `Task` in saport/critical_path/model.py
-        slacks = Dict()
-        for (e1, e2, task) in self.project_network.edges():
-            if task.is_dummy:
-                continue
-            else:
-                slacks[task.name] = latest_times[e2] - earliest_times[e1] - task.duration
 
-        return slacks
+        return {task.name: latest_times[e2] - earliest_times[e1] - task.duration for (e1, e2, task) in self.project_network.edges() if not task.is_dummy}
 
     def create_critical_paths(self, slacks: Dict[str, int]) -> List[List[str]]:
         # TODO:
@@ -121,7 +115,7 @@ class Solver:
         # tip 4. if "L" is a list "[1,2,3,4]", zip(L, L[1:]) will return [(1,2),(2,3),(3,4)]
         network_copy = copy.deepcopy(self.project_network)
 
-        for e1, e2, task in network_copy.edges():
+        for (e1, e2, task) in network_copy.edges():
             if not task.is_dummy and slacks[task.name] != 0:
                 network_copy.network.remove_edge(e1, e2)
 
@@ -129,5 +123,12 @@ class Solver:
         
         paths = list(nx.all_simple_paths(network_copy.network, self.project_network.start_node, self.project_network.goal_node))
 
+        critical_paths = list()
+        for path in paths:
+            temp = list()
+            for i in range(len(path) - 1):
+                if edges[(path[i].index, path[i + 1].index)] != "*":
+                    temp.append(edges[(path[i].index, path[i + 1].index)])
+            critical_paths.append(temp)
 
-        return list()
+        return critical_paths
