@@ -7,7 +7,7 @@ There still exist some issues that should be addressed before the deadline: **20
 
 <details><summary>[2p] Simplex should solve problem by maximization &gt;&gt; &#x27;NoneType&#x27; object has no attribute &#x27;type&#x27;</summary></details>
 <details><summary>[1p] Should properly create slacks based on earliest and latest times &gt;&gt; Tested code raises TypeError in typing.py:684</summary></details>
-<details><summary>[2p] Should be able to evaluate critical paths &gt;&gt; Tested code raises AttributeError in cpm_solver.py:122</summary></details>
+<details><summary>[2p] Should be able to evaluate critical paths &gt;&gt; Tested code raises NameError in cpm_solver.py:122</summary></details>
 
 -----------
 I remain your faithful servant\
