@@ -119,7 +119,7 @@ class Solver:
         # tip 2. use method "remove_edge(<start>, <end>)" directly on the graph object 
         # tip 3. nx.all_simple_paths method finds all the paths in the graph
         # tip 4. if "L" is a list "[1,2,3,4]", zip(L, L[1:]) will return [(1,2),(2,3),(3,4)]
-        network_copy = self.project_network.copy()
+        network_copy = copy.deepcopy(self.project_network)
 
         for e1, e2, task in network_copy.edges():
             if not task.is_dummy and slacks[task.name] != 0:
