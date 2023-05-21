@@ -1,11 +1,10 @@
 Dear Student,
 
-I'm happy to announce that you've managed to get **7** out of 10 points for this assignment.
-<details><summary>You have already managed to pass 4 tests, so that is encouraging!</summary>&emsp;☑&nbsp;[1p] Simplex should solve problem by minimization<br>&emsp;☑&nbsp;[2p] Should propagate times forward for each state<br>&emsp;☑&nbsp;[2p] Should propagate times backward for each state<br>&emsp;☑&nbsp;[2p] Should be able to evaluate critical paths</details>
+I'm happy to announce that you've managed to get **9** out of 10 points for this assignment.
+<details><summary>You have already managed to pass 5 tests, so that is encouraging!</summary>&emsp;☑&nbsp;[1p] Simplex should solve problem by minimization<br>&emsp;☑&nbsp;[2p] Simplex should solve problem by maximization<br>&emsp;☑&nbsp;[2p] Should propagate times forward for each state<br>&emsp;☑&nbsp;[2p] Should propagate times backward for each state<br>&emsp;☑&nbsp;[2p] Should be able to evaluate critical paths</details>
 
 There still exist some issues that should be addressed before the deadline: **2023-05-31 07:59:00 CEST (+0200)**. For further details, please refer to the following list:
 
-<details><summary>[2p] Simplex should solve problem by maximization &gt;&gt; Tested code raises NameError in simplex_solver_max.py:67</summary></details>
 <details><summary>[1p] Should properly create slacks based on earliest and latest times &gt;&gt; Tested code raises TypeError in typing.py:684</summary></details>
 
 -----------
