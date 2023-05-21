@@ -87,7 +87,7 @@ class Solver:
 
         return latest_times
 
-    def calculate_slacks(self, 
+    def calculate_slacks(self,
                          earliest_times: Dict[ProjectState, int], 
                          latest_times: Dict[ProjectState, int]) -> Dict[str, int]:
         # TODO:
@@ -115,7 +115,7 @@ class Solver:
         # tip 4. if "L" is a list "[1,2,3,4]", zip(L, L[1:]) will return [(1,2),(2,3),(3,4)]
         network_copy = copy.deepcopy(self.project_network)
 
-        for (e1, e2, task) in network_copy.edges():
+        for e1, e2, task in network_copy.edges():
             if not task.is_dummy and slacks[task.name] != 0:
                 network_copy.network.remove_edge(e1, e2)
 
