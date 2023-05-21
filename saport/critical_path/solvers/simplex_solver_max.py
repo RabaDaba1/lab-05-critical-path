@@ -76,12 +76,12 @@ class Solver:
         for node in self.project_network.nodes():
             if node != start_node and node != goal_node:
                 incoming = [(pred, node, self.project_network.arc_task(pred, node)) for pred in self.project_network.predecessors(node)]
-                outgoing = [(node, succ, self.project_network.arc_task(node, succ)) for succ in self.project_network.successors(node)]
+                exiting = [(node, succ, self.project_network.arc_task(node, succ)) for succ in self.project_network.successors(node)]
 
-                outgoing_sum = var_sum([Expression(variables[edge]) for edge in outgoing])
+                exiting_sum = var_sum([Expression(variables[edge]) for edge in exiting])
                 incoming_sum = var_sum([Expression(variables[edge]) for edge in incoming])
 
-                model.add_constraint(outgoing_sum - incoming_sum == 0)
+                model.add_constraint(exiting_sum - incoming_sum == 0)
 
         
         # Set models objecitve to path's length maximization
